@@ -1,7 +1,7 @@
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.nio.file.Files;
+import java.io.*;
+
+
+import java.io.Reader;
 
 import javax.xml.bind.DatatypeConverter;
 public class Encode {
@@ -11,25 +11,46 @@ public class Encode {
   }
   
   public static String bin2str(final String filename){
-    byte[] bytes;
+    String str = new String(); 
     try {
-      bytes = Files.readAllBytes(Paths.get(filename));
-    } catch (Exception e) {
-      bytes = null;
-    }
-    String str = new String();
-    str = DatatypeConverter.printBase64Binary(bytes);
-    return str;
+      RandomAccessFile f = new RandomAccessFile(filename, "r");
+      byte[] bytes = new byte[(int)f.length()];
+      f.read(bytes);
+      //bytes = Files.readAllBytes(Paths.get(filename)); //Java 7 Only
+      str = DatatypeConverter.printBase64Binary(bytes);
+      f.close();
+    } catch (Exception e) { }
+    return (str.isEmpty())? null : str;
   }
   
   public static byte[] str2bin(final String filename){
-    String string = null;
-    try {
+    String str = new String();
+    /*try {
       string = new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
     } catch (IOException e) { }
-    byte[] bytes;
-    bytes = DatatypeConverter.parseBase64Binary(string);    
-    return bytes;
+    */ // Java7 only
+    try {
+        Reader reader = new BufferedReader( new FileReader (filename));
+        StringBuilder builder = new StringBuilder();
+        char[] buffer = new char[8192];
+        int read;
+        while ((read = reader.read(buffer, 0, buffer.length)) > 0) {
+            builder.append(buffer, 0, read);
+        }
+        str = builder.toString();
+    } catch (Exception e) { }
+    /*
+    try {
+      RandomAccessFile f = new RandomAccessFile(filename, "r");
+      byte[] bytes = new byte[(int)f.length()];
+      f.read(bytes);
+      str = bytes.toString();
+      f.close();
+    } catch (Exception e) { }
+    */ // Java7 only
+    byte[] returnBytes;
+    returnBytes = DatatypeConverter.parseBase64Binary(str);    
+    return returnBytes;
   }
   
   public static String createZoneFile(final String encString){
