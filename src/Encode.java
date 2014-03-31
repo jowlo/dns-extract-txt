@@ -65,16 +65,16 @@ public class Encode {
   }
   
   public static void main(String args[]){
-    switch(args[0]){
-      case "e":
+    switch(args[0].charAt(0)){
+      case 'e':
         System.out.print(bin2str(args[1]));
         break;
-      case "d":
+      case 'd':
         try {
           System.out.write(str2bin(args[1]));
         } catch (IOException e) {}
         break;
-      case "z":
+      case 'z':
         System.out.print(createZoneFile(bin2str(args[1])));
         break;
       default:
