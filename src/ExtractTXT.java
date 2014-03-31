@@ -76,8 +76,8 @@ public class ExtractTXT {
   
   public static void main (String[] args) {
     String collect = new String();
-    for(int i=1; i<=5; i++){
-      collect += new ExtractTXT(i + args[0], args[1]).extract();
+    for(int i=0; i<= Integer.valueOf(new ExtractTXT(args[0] + ".jowlo.chickenkiller.com", args[1]).extract()); i++){
+      collect += new ExtractTXT(args[0]+ i +".jowlo.chickenkiller.com", args[1]).extract();
     }
     System.out.println(collect);
   }
