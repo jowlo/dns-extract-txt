@@ -74,11 +74,36 @@ public class ExtractTXT {
     return result;
   }
   
-  public static void main (String[] args) {
-    String collect = new String();
-    for(int i=0; i<= Integer.valueOf(new ExtractTXT(args[0] + ".jowlo.chickenkiller.com", args[1]).extract()); i++){
-      collect += new ExtractTXT(args[0]+ i +".jowlo.chickenkiller.com", args[1]).extract();
+  public static String collect(final String pSubdomain, final String pNameserver){
+    StringBuilder collect = new StringBuilder();
+    for(int i=0; i<= Integer.valueOf(new ExtractTXT(pSubdomain + ".jowlo.chickenkiller.com", pNameserver).extract()); i++){
+      collect.append(new ExtractTXT(pSubdomain + i +".jowlo.chickenkiller.com", pNameserver).extract());
     }
-    System.out.println(collect);
+    return collect.toString();
+  }
+  
+  public static void main (String[] args) {
+    switch(args[0].charAt(0)){
+      case 'c':
+        System.out.print(collect(args[1], args[2]));
+        break;
+      case 'd':
+        try {
+          System.out.write(Encode.str2bin(collect(args[1], args[2])));
+        } catch (IOException e) {}
+        break;
+      case 'f':
+        try {
+          FileOutputStream f = new FileOutputStream(args[3]);
+          f.write(Encode.str2bin(collect(args[1], args[2])));
+          f.close();
+        }
+        catch(IOException e){}
+        break;
+      default:
+        System.out.println("Need to set options! \n"
+            + "\t usage: ExtractTXT [c(ollect)|d(collect and _d_ecode)] (subdomain) (nameserver) [c(collect)|d(collect and _d_ecode)]");
+        break;
+    }
   }
 }
