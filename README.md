@@ -21,6 +21,9 @@ Some of the DNS code is (loosely) still based on this, so following license disc
 Everything not under this license is released under GPL.
 
 
+
+Original License
+-----------------
   Java Network Programming, Second Edition
   Merlin Hughes, Michael Shoffner, Derek Hamner
   Manning Publications Company; ISBN 188477749X
