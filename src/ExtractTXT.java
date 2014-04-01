@@ -11,11 +11,12 @@ public class ExtractTXT {
     hostname = pHostname;
   }
   
-  public String extract () {
+  
+  public static String extract (final String pHostname, final String pNameserver) {
     String txt = new String();
-    DNSQuery query = new DNSQuery (hostname, 255, 1); // 255 = any, 1 = DNS Class Internet
+    DNSQuery query = new DNSQuery (pHostname, 255, 1); // 255 = any, 1 = DNS Class Internet
     try {
-      Socket socket = new Socket (nameserver, 53); // 53 = DNS DEFAULT_PORT
+      Socket socket = new Socket (pNameserver, 53); // 53 = DNS DEFAULT_PORT
       socket.setSoTimeout (10000);
       sendQuery (query, socket);
       txt = getResponse (query, socket);
@@ -85,9 +86,9 @@ public class ExtractTXT {
   
   public static String collect(final String pDomain, final String pNameserver){
     StringBuilder collect = new StringBuilder();
-    for(int i=0; i<= Integer.valueOf(new ExtractTXT(pDomain, pNameserver).extract()); i++){
-      collect.append(new ExtractTXT(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver).extract());
-//      System.out.println(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')));
+    for(int i=0; i<= Integer.valueOf(extract(pDomain, pNameserver)); i++){
+      collect.append(extract(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver));
+      //      System.out.println(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')));
     }
     return collect.toString();
   }
@@ -116,4 +117,7 @@ public class ExtractTXT {
         break;
     }
   }
+
+
+
 }
