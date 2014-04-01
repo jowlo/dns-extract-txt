@@ -74,10 +74,11 @@ public class ExtractTXT {
     return result;
   }
   
-  public static String collect(final String pSubdomain, final String pNameserver){
+  public static String collect(final String pDomain, final String pNameserver){
     StringBuilder collect = new StringBuilder();
-    for(int i=0; i<= Integer.valueOf(new ExtractTXT(pSubdomain + ".jowlo.chickenkiller.com", pNameserver).extract()); i++){
-      collect.append(new ExtractTXT(pSubdomain + i +".jowlo.chickenkiller.com", pNameserver).extract());
+    for(int i=0; i<= Integer.valueOf(new ExtractTXT(pDomain, pNameserver).extract()); i++){
+      collect.append(new ExtractTXT(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver).extract());
+//      System.out.println(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')));
     }
     return collect.toString();
   }
