@@ -49,22 +49,31 @@ public class ExtractTXT {
 
   public static String receiveResponse (byte[] data, int length) throws IOException {
     DNSInputStream dnsIn = new DNSInputStream (data, 0, length);
-    int id = dnsIn.readShort ();
-    int flags = dnsIn.readShort ();
+    
+    /*int id = dnsIn.readShort ();
+    int flags = dnsIn.readShort ();*/
+    dnsIn.skip(4);
+    
     int numQueries = dnsIn.readShort ();
-    int numAnswers = dnsIn.readShort ();
+    
+    /*int numAnswers = dnsIn.readShort ();
     int numAuthorities = dnsIn.readShort ();
-    int numAdditional = dnsIn.readShort ();
+    int numAdditional = dnsIn.readShort ();*/
+    dnsIn.skip(6);
     while (numQueries -- > 0) { // discard questions
       String queryName = dnsIn.readDomainName ();
-      int queryType = dnsIn.readShort ();
-      int queryClass = dnsIn.readShort ();
+      /*int queryType = dnsIn.readShort ();
+      int queryClass = dnsIn.readShort ();*/
+      dnsIn.skip(4);
     }
     String rrName = dnsIn.readDomainName ();
-    int rrType = dnsIn.readShort ();
+    
+    /*int rrType = dnsIn.readShort ();
     int rrClass = dnsIn.readShort ();
     long rrTTL = dnsIn.readInt ();
     int rrDataLen = dnsIn.readShort ();
+    */
+    dnsIn.skip(10);
     String s;
     String result = new String();
     try{
