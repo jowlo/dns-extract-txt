@@ -157,7 +157,7 @@ class Query implements Runnable {
       DNSQuery query = new DNSQuery (hostname, 255, 1); // 255 = any, 1 = DNS Class Internet
       try {
         Socket socket = new Socket (nameserver, 53); // 53 = DNS DEFAULT_PORT
-        socket.setSoTimeout (10000);
+        socket.setSoTimeout (0);
         ExtractTXT.sendQuery (query, socket);
         txt = ExtractTXT.getResponse (query, socket);
         socket.close ();
