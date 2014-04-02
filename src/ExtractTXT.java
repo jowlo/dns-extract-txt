@@ -1,11 +1,17 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ExtractTXT {
   
   private String hostname;
   private String nameserver;
-  
+  private static HashMap<Integer, String> resMap= new HashMap<Integer, String>();
+    
   public ExtractTXT(final String pHostname, final String pNameserver) {
     nameserver = pNameserver;
     hostname = pHostname;
@@ -86,9 +92,20 @@ public class ExtractTXT {
   
   public static String collect(final String pDomain, final String pNameserver){
     StringBuilder collect = new StringBuilder();
+    ExecutorService es = Executors.newCachedThreadPool();
     for(int i=0; i<= Integer.valueOf(extract(pDomain, pNameserver)); i++){
-      collect.append(extract(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver));
+      //collect.append(extract(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver));
       //      System.out.println(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')));
+      es.execute(new Query(pDomain.substring(0, pDomain.indexOf('.')) + i +pDomain.substring(pDomain.indexOf('.')), pNameserver, i));
+
+      }
+    es.shutdown();
+    try {
+      es.awaitTermination(5, TimeUnit.MINUTES);
+    } catch (InterruptedException e) { e.printStackTrace(); }
+    
+    for(int i=0; i < resMap.size(); i++){
+      collect.append(resMap.get(i));
     }
     return collect.toString();
   }
@@ -119,5 +136,36 @@ public class ExtractTXT {
   }
 
 
+  public static void setArrVar(final String pVal, final int pKey) {
+    resMap.put(pKey, pVal);
+  }
 
 }
+
+class Query implements Runnable {
+  private String hostname, nameserver; 
+  private final int arrPos;
+  public Query (final String pHostname, final String pNameserver, final int parrPos) {
+    hostname = pHostname;
+    nameserver = pNameserver;
+    arrPos = parrPos;
+  }
+  @Override
+  public void run() {
+    ExtractTXT.setArrVar(ExtractTXT.extract(hostname, nameserver), arrPos);
+      String txt = new String();
+      DNSQuery query = new DNSQuery (hostname, 255, 1); // 255 = any, 1 = DNS Class Internet
+      try {
+        Socket socket = new Socket (nameserver, 53); // 53 = DNS DEFAULT_PORT
+        socket.setSoTimeout (10000);
+        ExtractTXT.sendQuery (query, socket);
+        txt = ExtractTXT.getResponse (query, socket);
+        socket.close ();
+        //printRRs (query);
+      } catch (IOException ex) {
+        System.out.println ("in Query" + ex);
+      }
+      ExtractTXT.setArrVar(txt, arrPos);
+   }
+  }
+  
