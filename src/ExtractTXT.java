@@ -23,7 +23,7 @@ public class ExtractTXT {
     DNSQuery query = new DNSQuery (pHostname, 255, 1); // 255 = any, 1 = DNS Class Internet
     try {
       Socket socket = new Socket (pNameserver, 53); // 53 = DNS DEFAULT_PORT
-      socket.setSoTimeout (10000);
+      socket.setSoTimeout (0);
       sendQuery (query, socket);
       txt = getResponse (query, socket);
       socket.close ();
